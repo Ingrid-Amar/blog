@@ -11,22 +11,26 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from re import S
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+#DEBUG = False
+DEBUG = env.bool("DEBUG", default=False)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ef!+5y#p+b4%ap7qw7-ui#b)ik^a*3zhe#*=6)m*p(*92f$ah="
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["potatosarethebest.fly.dev", "localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://potatosarethebest-db.fly.dev"]
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "blog", 
     "accounts", #new
@@ -46,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -78,10 +84,8 @@ WSGI_APPLICATION = "django_project.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": env.dj_db_url("DATABASE_URL", default="sqlite:///db.sqlite3"),
+    
 }
 
 
@@ -126,7 +130,7 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage",
                         },
             "staticfiles": { "BACKEND":
-                "django.contrib.staticfiles.storage.StaticFilesStorage",},
+                "whitenoise.storage.CompressedManifestStaticFilesStorage",},
                 }
 
 # Default primary key field type
