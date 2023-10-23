@@ -30,7 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ["potatosarethebest.fly.dev", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["https://potatosarethebest-db.fly.dev"]
+CSRF_TRUSTED_ORIGINS = ["https://potatosarethebest.fly.dev"]
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
